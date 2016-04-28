@@ -1,4 +1,9 @@
 % class definition for dataManager 
+% dataManager is a tool for using hashes to interface between your code and your data
+% the point is to make your code agnostic to WHERE the data is, but sensitive to WHAT the data is
+% 
+% see: https://github.com/sg-s/data-manager
+% for more docs
 % 
 % created by Srinivas Gorur-Shandilya. Contact me at http://srinivas.gs/contact/
 
@@ -8,6 +13,44 @@ classdef dataManager
    end
    
    methods
+
+      function [paths] = getPath(~,hash)
+         % returns the path corresponding to a hash
+
+         % load the hash table
+         if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==2
+            load([fileparts(which(mfilename)) oss 'hash_table.mat'])
+         else
+            error('Hash table empty.')
+         end
+
+         % look for the hash(es)
+         if iscell(hash) 
+         else
+            hash = {hash};
+         end
+         paths = hash;
+
+         % update the last retrieved 
+         if exist('last_retrieved','var')
+         else
+            last_retrieved = cell(length(all_hashes),1);
+         end
+
+         for i = 1:length(hash)
+            if isempty(find(strcmp(hash{i},all_hashes),1,'first'))
+               error('This hash was not found in the hash table:')
+               disp(hash{i})
+            else
+               paths{i} = all_paths{find(strcmp(hash{i},all_hashes),1,'first')};
+               last_retrieved{i} = datestr(now);
+            end
+         end
+
+         % save
+         save([fileparts(which(mfilename)) oss 'hash_table.mat'],'last_retrieved','-append')
+      end
+
       function rehash(~,path_name)
 
          % load the hash table

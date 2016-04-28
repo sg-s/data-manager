@@ -4,14 +4,19 @@
 
 hash-based data management system written in MATLAB. 
 
-## Why you should use this:
+## The problem
 
-1. share code and data easier: you don't have to worry about where the data is
-2. ensure reproducible document builds. You want to have the same code run on the same data to generate the same document. 
+1. you write and share code. But code operates on data, and you want a way to work on the same code independently of where the code is, or where the data is. 
+2. data shouldn't change. But it does, because people make mistakes. You don't want your entire analysis pipeline to operate on data that isn't what you think it is. GIGO. 
+
+## The Solution
+
+1. hash-based data integrity checks
+2. your code is agnostic to the **location** of the data, but cares only about **what** the data is. Think of this as [URIs](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) vs. [URL](https://en.wikipedia.org/wiki/Uniform_Resource_Locator).  
 
 ## Installation
 
-The reccomended way to install this is to use my package manager:
+The recommended way to install this is to use my package manager:
 
 ```matlab
 urlwrite('http://srinivas.gs/install.m','install.m'); 
