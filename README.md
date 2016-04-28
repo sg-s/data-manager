@@ -27,26 +27,32 @@ First, generate a dataManager object:
 dm = dataManager;
 ```
 
-To scan the current folder for all data files and determine their hashes:
+Scan the current folder for all data files and determine their hashes:
 
 ```matlab
 dm.rehash;
 ```
 
-To scan a folder and add all the data there to the hash table:
+Scan a folder and add all the data there to the hash table:
 
 ```matlab
 dm.reshash('/path/to/data/')
 ```
 
-To show the hash of a particular folder or a file:
+View all hashes and paths stored in the hash table:
+
+```matlab
+dm.view
+```
+
+Show the hash of a particular folder or a file:
 
 ```matlab
 hash = dm.getHash('path/to/file.mat');
 hash = dm.getHash('path/to/folder');
 ```
 
-To retrieve the path corresponding to a particular hash:
+Retrieve the path corresponding to a particular hash:
 
 ```matlab
 path_name = dm.getPath(hash);
