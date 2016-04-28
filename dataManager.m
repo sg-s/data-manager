@@ -39,12 +39,17 @@ classdef dataManager
 
          for i = 1:length(hash)
             if isempty(find(strcmp(hash{i},all_hashes),1,'first'))
-               error('This hash was not found in the hash table:')
+               disp('This hash was not found in the hash table:')
                disp(hash{i})
+               error('Hash not found!')
             else
                paths{i} = all_paths{find(strcmp(hash{i},all_hashes),1,'first')};
                last_retrieved{i} = datestr(now);
             end
+         end
+
+         if length(paths) == 1
+            paths = paths{1}; % return a string if possible
          end
 
          % save
@@ -68,6 +73,13 @@ classdef dataManager
 
          % get all folders in the path
          all_folders = getAllFolders(path_name);
+
+         % make sure there are no trailing slashes
+         for i = 1:length(all_folders)
+            if strcmp(all_folders{i}(end),'/')
+               all_folders{i}(end) = '';
+            end
+         end
 
          % for each folder...
          for i = 1:length(all_folders)

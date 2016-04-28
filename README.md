@@ -65,4 +65,5 @@ path_name = dm.getPath(hash);
 
 # License 
 
-[GPL v2](http://choosealicense.com/licenses/gpl-2.0/#)
+data-manager is free software. 
+[GPL v3](https://www.gnu.org/licenses/gpl-3.0.txt)
