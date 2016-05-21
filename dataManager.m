@@ -184,5 +184,38 @@ classdef dataManager
             disp([all_hashes{i} '    ' all_paths{i}])
          end
       end
+
+      function [] = cleanup(dm)
+         % removes paths in the hash table that point to files that no longer exist
+
+          % load the hash table
+         if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==2
+            load([fileparts(which(mfilename)) oss 'hash_table.mat'])
+         else
+            disp('Hash table empty.')
+            return
+         end
+
+         delete_me = false(length(all_hashes),1);
+         for i = 1:length(all_hashes)
+            if exist(all_paths{i},'file') ~= 2
+               delete_me(i) = true;
+            end
+         end
+
+         all_paths(delete_me) = [];
+         all_hashes(delete_me) = [];
+
+         disp(['Deleted ' oval(sum(delete_me)) ' entries from the hash table'])
+
+         % save this...
+         disp('Saving...')
+         if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==7
+            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','-append')
+         else
+            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','-v7.3')
+         end
+
+      end % end cleanup function
    end % end methods
 end % end classdef

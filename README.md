@@ -63,7 +63,13 @@ Retrieve the path corresponding to a particular hash:
 path_name = dm.getPath(hash);
 ```
 
+Clean up entries in the hash table that no longer resolve to files.
+
+```matlab
+dm.cleanup
+``
+
 # License 
 
-data-manager is free software. 
+data-manager is [free software](https://fsf.org/). 
 [GPL v3](https://www.gnu.org/licenses/gpl-3.0.txt)
