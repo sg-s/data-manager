@@ -14,6 +14,8 @@ hash-based data management system written in MATLAB.
 1. [hash](https://en.wikipedia.org/wiki/Cryptographic_hash_function)-based data integrity checks
 2. your code is agnostic to the **location** of the data, but cares only about **what** the data is. Think of this as [URIs](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) vs. [URL](https://en.wikipedia.org/wiki/Uniform_Resource_Locator).  
 
+This is inspired by how [magnet links](https://en.wikipedia.org/wiki/Magnet_URI_scheme) work. 
+
 ## Installation
 
 The recommended way to install this is to use my package manager:
@@ -76,7 +78,7 @@ Clean up entries in the hash table that no longer resolve to files.
 
 ```matlab
 dm.cleanup
-``
+```
 
 # License 
 
