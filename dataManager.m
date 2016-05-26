@@ -76,7 +76,7 @@ classdef dataManager
 
          % make sure there are no trailing slashes
          for i = 1:length(all_folders)
-            if strcmp(all_folders{i}(end),'/')
+            if strcmp(all_folders{i}(end),oss)
                all_folders{i}(end) = '';
             end
          end
@@ -92,7 +92,7 @@ classdef dataManager
             end
             all_files = all_files(:);
 
-            % ignore all hidden files and folders
+            % ignore all hidden files and folders. 
             rm_this = false(length(all_files),1);
             for j = 1:length(all_files)
                if any(strfind(all_files{j},[oss '.']))
@@ -104,6 +104,33 @@ classdef dataManager
             end
             all_files(rm_this) = []; clear rm_this
 
+            % locate and read the dmignore file
+            if exist([fileparts(which(mfilename)) oss 'dmignore.m'],'file') == 2
+               lines = lineRead([fileparts(which(mfilename)) oss 'dmignore.m']);
+            else
+               error('No dmignore.m file found!')
+            end
+
+            % build a list of things to ignore from the dmignore file
+            ignore_these = {};
+            for j = 1:length(lines)
+               this_line = lines{j};
+               this_line(strfind(this_line,'%'):end) = [];
+               if ~isempty(this_line)
+                  ignore_these = [ignore_these this_line];
+               end
+            end
+
+            % remove files with patterns in dmignore 
+            rm_this = false(length(all_files),1);
+            for j = 1:length(all_files)
+               for k = 1:length(ignore_these)
+                  if any(strfind(all_files{j},ignore_these{k}))
+                     rm_this(j) = true;
+                  end
+               end
+            end
+            all_files(rm_this) = []; clear rm_this
 
             % grab hashes for all these files. 
             hashes = all_files;

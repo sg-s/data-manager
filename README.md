@@ -80,6 +80,8 @@ Clean up entries in the hash table that no longer resolve to files.
 dm.cleanup
 ```
 
+dataManager also uses a file called `dmignore.m` which lists file name patterns that it should ignore. You can add to `dmignore.m` to suit your needs. 
+
 # License 
 
 data-manager is [free software](https://fsf.org/). 
