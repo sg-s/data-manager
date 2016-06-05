@@ -167,7 +167,10 @@ classdef dataManager
 
             % now we identify the folder we are in using a hash of all the hashes of the files in it
             folder_hash = dataHash(hashes);
+
+
             if isempty(find(strcmp(folder_hash,all_hashes),1,'first')) && isempty(find(strcmp(all_folders{i},all_paths),1,'first'))
+               % this folder hash does not exist in the hash table
             else
                rm_this = [];
                % remove the old hash corresponding to the current path
@@ -219,8 +222,7 @@ classdef dataManager
       end
 
       function [] = cleanup(dm)
-         % removes paths in the hash table that point to files that no longer exist
-
+         % 1. remove paths in the hash table that point to files that no longer exist
           % load the hash table
          if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==2
             load([fileparts(which(mfilename)) oss 'hash_table.mat'])
@@ -231,7 +233,8 @@ classdef dataManager
 
          delete_me = false(length(all_hashes),1);
          for i = 1:length(all_hashes)
-            if exist(all_paths{i},'file') ~= 2
+            if exist(all_paths{i},'file') == 2 || exist(all_paths{i},'dir') == 7
+            else
                delete_me(i) = true;
             end
          end
@@ -239,7 +242,44 @@ classdef dataManager
          all_paths(delete_me) = [];
          all_hashes(delete_me) = [];
 
-         disp(['Deleted ' oval(sum(delete_me)) ' entries from the hash table'])
+         if any(delete_me)
+            disp(['Deleted ' oval(sum(delete_me)) ' entries from the hash table because they pointed to files that no longer existed.'])
+         end
+
+         % 2. remove entries in the hash table that match a pattern in the dmignore file
+         % locate and read the dmignore file
+         if exist([fileparts(which(mfilename)) oss 'dmignore.m'],'file') == 2
+            lines = lineRead([fileparts(which(mfilename)) oss 'dmignore.m']);
+         else
+            error('No dmignore.m file found!')
+         end
+
+         % build a list of things to ignore from the dmignore file
+         ignore_these = {};
+         for j = 1:length(lines)
+            this_line = lines{j};
+            this_line(strfind(this_line,'%'):end) = [];
+            if ~isempty(this_line)
+               ignore_these = [ignore_these this_line];
+            end
+         end
+
+         delete_me = false(length(all_paths),1);
+         for i = 1:length(all_paths)
+            for j = 1:length(ignore_these)
+               if any(strfind(all_paths{i},ignore_these{j}))
+                  delete_me(i) = true;
+               end
+            end
+         end
+
+         all_paths(delete_me) = [];
+         all_hashes(delete_me) = [];
+
+         if any(delete_me)
+            disp(['Deleted ' oval(sum(delete_me)) ' entries from the hash table because they matched patterns defined in dmignore.m'])
+         end
+
 
          % save this...
          disp('Saving...')
