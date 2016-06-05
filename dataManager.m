@@ -207,8 +207,14 @@ classdef dataManager
             disp('Hash table empty.')
             return
          end
+
+
+         % sort the paths
+         sorted_paths = sortCell(all_paths);
+
          for i = 1:length(all_hashes)
-            disp([all_hashes{i} '    ' all_paths{i}])
+            % find this path in the original cell array
+            disp([all_hashes{find(strcmp(sorted_paths{i},all_paths))} '    ' sorted_paths{i}])
          end
       end
 
