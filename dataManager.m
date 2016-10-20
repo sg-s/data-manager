@@ -31,6 +31,9 @@ classdef dataManager < matlab.mixin.CustomDisplay
             cprintf('text','\nrehash specific folder: ')
             fprintf('rehash(dataManager,''path/to-folder/'')');
 
+            cprintf('text','\nget path to a particular data file: ')
+            fprintf('getPath(dataManager,''hash-of-data'')');
+
             cprintf('text','\nclean up; prune dead links: ')
             fprintf('<a href="matlab:cleanup(dataManager)">cleanup(dataManager)</a>');
 
