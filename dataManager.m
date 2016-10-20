@@ -8,10 +8,37 @@
 % created by Srinivas Gorur-Shandilya. Contact me at http://srinivas.gs/contact/
 
 
-classdef dataManager
+classdef dataManager < matlab.mixin.CustomDisplay
    properties
    end
    
+    methods (Access = protected)
+        function displayScalarObject(~)
+            url = 'https://github.com/sg-s/data-manager/';
+            fprintf(['<a href="' url '">dataManager</a> object']);
+            fprintf([' (build ' strtrim(fileread([fileparts(which(mfilename)) oss 'build_number'])) ')\n'])
+
+            fprintf('dataManager is a toolbox that lets you address data by what it is, rather than where it is\n\n')
+            cprintf('_text','Usage:')
+            fprintf('\n\n')
+
+            cprintf('text','View hash table: ')
+            fprintf('<a href="matlab:view(dataManager)">view(dataManager)</a>');
+
+            cprintf('text','\nrehash current folder: ')
+            fprintf('<a href="matlab:rehash(dataManager)">rehash(dataManager)</a>');
+
+            cprintf('text','\nrehash specific folder: ')
+            fprintf('rehash(dataManager,''path/to-folder/'')');
+
+            cprintf('text','\nclean up; prune dead links: ')
+            fprintf('<a href="matlab:cleanup(dataManager)">cleanup(dataManager)</a>');
+
+            fprintf('\n \ndata-manager is free software, released under the GPL\n');
+        end % end displayScalarObject
+   end % end protected methods
+
+
    methods
 
       function [paths] = getPath(~,hash)
