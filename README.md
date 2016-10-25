@@ -61,6 +61,12 @@ View all hashes and paths stored in the hash table:
 dm.view
 ```
 
+View only hashes corresponding to paths that contain a specific string:
+
+```matlab
+dm.view('bicameral-mind')
+```
+
 Show the hash of a particular folder or a file:
 
 ```matlab

@@ -37,7 +37,8 @@ classdef dataManager < matlab.mixin.CustomDisplay
             cprintf('text','\nclean up; prune dead links: ')
             fprintf('<a href="matlab:cleanup(dataManager)">cleanup(dataManager)</a>');
 
-            fprintf('\n \ndata-manager is free software, released under the GPL\n');
+            fprintf('\n \ndata-manager is free software, released under the GPL.\n');
+            fprintf('\nbugs? <a href="mailto:datamanger@srinivas.gs">write to me.</a>\n');
         end % end displayScalarObject
    end % end protected methods
 
@@ -232,7 +233,7 @@ classdef dataManager < matlab.mixin.CustomDisplay
 
       end % end function rehash
 
-      function [] = view(dm)
+      function [] = view(dm,path_spec)
           % load the hash table
          if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==2
             load([fileparts(which(mfilename)) oss 'hash_table.mat'])
@@ -240,14 +241,23 @@ classdef dataManager < matlab.mixin.CustomDisplay
             disp('Hash table empty.')
             return
          end
-
-
          % sort the paths
          sorted_paths = sortCell(all_paths);
 
-         for i = 1:length(all_hashes)
-            % find this path in the original cell array
-            disp([all_hashes{find(strcmp(sorted_paths{i},all_paths))} '    ' sorted_paths{i}])
+
+         if nargin == 2
+            for i = 1:length(all_hashes)
+               % find this path in the original cell array
+               if any(strfind(sorted_paths{i},path_spec))
+                  disp([all_hashes{find(strcmp(sorted_paths{i},all_paths))} '    ' sorted_paths{i}])
+               end
+            end
+         else
+            for i = 1:length(all_hashes)
+               % find this path in the original cell array
+               disp([all_hashes{find(strcmp(sorted_paths{i},all_paths))} '    ' sorted_paths{i}])
+
+            end
          end
       end
 
