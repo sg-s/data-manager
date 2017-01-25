@@ -22,8 +22,8 @@ The recommended way to install this is to use my package manager:
 
 ```matlab
 urlwrite('http://srinivas.gs/install.m','install.m'); 
-install data-manager
-install srinivas.gs_mtools  
+install sg-s/data-manager
+install sg-s/srinivas.gs_mtools  
 ```
 
 Alternatively, you can clone this using `git`:
