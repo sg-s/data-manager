@@ -168,7 +168,12 @@ classdef dataManager < matlab.mixin.CustomDisplay
             Opt.Input = 'file';
             for j = 1:length(all_files)
                disp(all_files{j})
-               hashes{j} = dataHash(all_files{j},Opt);
+               % attempt to use system md5 first,
+               try
+                  hashes{j} = md5(all_files{j});
+               catch
+                  hashes{j} = dataHash(all_files{j},Opt);
+               end
             end
 
             % add all these hashes to the main hash table, and overwrite if need be
