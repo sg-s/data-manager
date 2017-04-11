@@ -6,8 +6,8 @@ hash-based data management system written in MATLAB.
 
 ## The problem
 
-1. you write and share code. But code operates on data, and you want a way to work on the same code independently of where the code is, or where the data is. 
-2. data shouldn't change. But it does, because people make mistakes. You don't want your entire analysis pipeline to operate on data that isn't what you think it is. [GIGO](https://en.wikipedia.org/wiki/Garbage_in,_garbage_out). 
+1. You write and share code. But code operates on data, and you want a way to work on the same code independently of where the code is, or where the data is. 
+2. Data shouldn't change. But it does, because people make mistakes. Hard drives fail. You don't want your entire analysis pipeline to operate on data that isn't what you think it is. [GIGO](https://en.wikipedia.org/wiki/Garbage_in,_garbage_out). 
 
 ## The Solution
 
@@ -49,29 +49,28 @@ Scan the current folder for all data files and determine their hashes:
 dm.rehash;
 ```
 
-Scan a folder and add all the data there to the hash table:
+Scan a specific folder and add all the data there to the hash table:
 
 ```matlab
-dm.reshash('/path/to/data/')
+dm.rehash('/path/to/folder/with/data/')
 ```
 
-View all hashes and paths stored in the hash table:
+View all hashes and paths stored in the hash table, sorted by when they were last accessed:
 
 ```matlab
 dm.view
 ```
 
-View only hashes corresponding to paths that contain a specific string:
+View all hashes and paths stored in the hash table, sorted by path name:
 
 ```matlab
-dm.view('bicameral-mind')
+dm.view('','name')
 ```
 
-Show the hash of a particular folder or a file:
+View only hashes corresponding to paths that contain a specific string, and sorted by when they were last accessed:
 
 ```matlab
-hash = dm.getHash('path/to/file.mat');
-hash = dm.getHash('path/to/folder');
+dm.view('bicameral-mind','la')
 ```
 
 Retrieve the path corresponding to a particular hash:
@@ -84,6 +83,17 @@ Clean up entries in the hash table that no longer resolve to files.
 
 ```matlab
 dm.cleanup
+```
+
+View all methods of `dataManager`:
+
+```matlab
+mathods(dataManager)
+```
+
+View interactive help:
+```matlab
+dataManager
 ```
 
 dataManager also uses a file called `dmignore.m` which lists file name patterns that it should ignore. You can add to `dmignore.m` to suit your needs. 

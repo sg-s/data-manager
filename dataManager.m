@@ -45,7 +45,7 @@ classdef dataManager < matlab.mixin.CustomDisplay
 
    methods
 
-      function [paths] = getPath(~,hash)
+      function [paths] = getPath(dm,hash)
          % returns the path corresponding to a hash
 
          % load the hash table
@@ -65,17 +65,19 @@ classdef dataManager < matlab.mixin.CustomDisplay
          % update the last retrieved 
          if exist('last_retrieved','var')
          else
+            disp('No info on last retrieved, creating new variable...')
             last_retrieved = cell(length(all_hashes),1);
          end
 
          for i = 1:length(hash)
-            if isempty(find(strcmp(hash{i},all_hashes),1,'first'))
+            this_index = find(strcmp(hash{i},all_hashes),1,'first');
+            if isempty(this_index)
                disp('This hash was not found in the hash table:')
                disp(hash{i})
                error('Hash not found!')
             else
-               paths{i} = all_paths{find(strcmp(hash{i},all_hashes),1,'first')};
-               last_retrieved{i} = datestr(now);
+               paths{i} = all_paths{this_index};
+               last_retrieved{this_index} = datestr(now);
             end
          end
 
@@ -194,10 +196,12 @@ classdef dataManager < matlab.mixin.CustomDisplay
                   rm_this = unique(rm_this);
                   all_hashes(rm_this) = [];
                   all_paths(rm_this) = [];
+                  last_retrieved(rm_this) = [];
                end 
                
                all_hashes = [all_hashes; hashes{j}];
                all_paths = [all_paths; all_files{j}];
+               last_retrieved = [last_retrieved; ''];
 
             end
 
@@ -221,24 +225,26 @@ classdef dataManager < matlab.mixin.CustomDisplay
                rm_this = unique(rm_this);
                all_hashes(rm_this) = [];
                all_paths(rm_this) = [];
+               last_retrieved(rm_this) = [];
             end
             all_hashes = [all_hashes; folder_hash];
             all_paths = [all_paths; all_folders{i}];
+            last_retrieved = [last_retrieved; ''];
 
 
          end % end loop over all_folders
          % save this...
          disp('Saving...')
          if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==7
-            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','-append')
+            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','last_retrieved','-append')
          else
-            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','-v7.3')
+            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','last_retrieved','-v7.3')
          end
          
 
       end % end function rehash
 
-      function [] = view(dm,path_spec)
+      function [] = view(dm,path_spec,sort_order)
           % load the hash table
          if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==2
             load([fileparts(which(mfilename)) oss 'hash_table.mat'])
@@ -246,25 +252,61 @@ classdef dataManager < matlab.mixin.CustomDisplay
             disp('Hash table empty.')
             return
          end
+
+         if nargin < 2
+            path_spec = '';
+         end
+         if nargin < 3
+            sort_order = 'la'; % last accessed 
+         end
+
+         if length(last_retrieved) < length(all_hashes)
+            for i = length(last_retrieved)+1:length(all_hashes)
+               last_retrieved{i} = '';
+            end
+         end
+
+         % for sorting purposes, we combine the last retrieved with the hash
+         lr_hash = last_retrieved;
+         for i = 1:length(last_retrieved)
+            if isempty(last_retrieved{i})
+               lr_hash{i} = ['-------never--------   ' all_hashes{i}];
+            else
+               lr_hash{i} = [last_retrieved{i} '   ' all_hashes{i}];
+            end
+         end
+
          % sort the paths
-         sorted_paths = sortCell(all_paths);
-
-
-         if nargin == 2
+         if strcmp(sort_order,'la')
+            sorted_times = sortCell(lr_hash);
             for i = 1:length(all_hashes)
                % find this path in the original cell array
-               if any(strfind(sorted_paths{i},path_spec))
-                  disp([all_hashes{find(strcmp(sorted_paths{i},all_paths))} '    ' sorted_paths{i}])
+               this_loc = find(strcmp(sorted_times{i},lr_hash));
+               if any(strfind(all_paths{this_loc},path_spec)) ||  isempty(path_spec)
+                  
+                  disp([sorted_times{i} '  '  all_paths{this_loc}])
                end
             end
          else
+            sorted_paths = sortCell(all_paths);
             for i = 1:length(all_hashes)
                % find this path in the original cell array
-               disp([all_hashes{find(strcmp(sorted_paths{i},all_paths))} '    ' sorted_paths{i}])
-
+               if any(strfind(sorted_paths{i},path_spec)) ||  isempty(path_spec)
+                  this_loc = find(strcmp(sorted_paths{i},all_paths));
+                  lts = last_retrieved{this_loc};
+                  if isempty(lts)
+                     lts = '-------never--------';
+                  end
+                  disp([all_hashes{this_loc} '     '  lts '    '  sorted_paths{i}])
+               end
             end
          end
-      end
+      end % end function
+
+
+
+            
+ 
 
       function [] = cleanup(dm)
          % 1. remove paths in the hash table that point to files that no longer exist
@@ -320,6 +362,7 @@ classdef dataManager < matlab.mixin.CustomDisplay
 
          all_paths(delete_me) = [];
          all_hashes(delete_me) = [];
+         last_retrieved(delete_me) = [];
 
          if any(delete_me)
             disp(['Deleted ' oval(sum(delete_me)) ' entries from the hash table because they matched patterns defined in dmignore.m'])
@@ -329,9 +372,9 @@ classdef dataManager < matlab.mixin.CustomDisplay
          % save this...
          disp('Saving...')
          if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==7
-            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','-append')
+            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','last_retrieved','-append')
          else
-            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','-v7.3')
+            save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','last_retrieved','all_hashes','-v7.3')
          end
 
       end % end cleanup function
