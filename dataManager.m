@@ -77,6 +77,28 @@ classdef dataManager < matlab.mixin.CustomDisplay
                error('Hash not found!')
             else
                paths{i} = all_paths{this_index};
+
+               % check that the hash is correct
+               try
+                  temp = md5(paths{i});
+               catch
+                  Opt.Input = 'file';
+                  temp = dataHash(paths{i},Opt);
+               end
+               if ~strcmp(hash{i},temp)
+                  disp('File modified since last rehash. Your data has been modified, and the hashes do not match.')
+                  disp('File name:')
+                  disp(paths{i})
+                  disp(['Requested hash is ' hash{i}])
+                  disp(['Actual hash is ' temp])
+
+                  cprintf('text','\nrehash the problematic file: ')
+                  eval_string = ['rehash(dataManager,' char(39), paths{i} char(39) ')'];
+                  fprintf(['<a href="matlab:' eval_string '">rehash this file</a>']);
+
+                  error('hash check failed')
+               end
+
                last_retrieved{this_index} = datestr(now);
             end
          end
@@ -196,7 +218,10 @@ classdef dataManager < matlab.mixin.CustomDisplay
                   rm_this = unique(rm_this);
                   all_hashes(rm_this) = [];
                   all_paths(rm_this) = [];
-                  last_retrieved(rm_this) = [];
+                  try
+                     last_retrieved(rm_this) = [];
+                  catch
+                  end
                end 
                
                all_hashes = [all_hashes; hashes{j}];
@@ -225,7 +250,10 @@ classdef dataManager < matlab.mixin.CustomDisplay
                rm_this = unique(rm_this);
                all_hashes(rm_this) = [];
                all_paths(rm_this) = [];
-               last_retrieved(rm_this) = [];
+               try
+                  last_retrieved(rm_this) = [];
+               catch
+               end
             end
             all_hashes = [all_hashes; folder_hash];
             all_paths = [all_paths; all_folders{i}];
