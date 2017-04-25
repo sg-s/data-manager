@@ -10,6 +10,7 @@
 
 classdef dataManager < matlab.mixin.CustomDisplay
    properties
+      verbosity  = 10;
    end
    
     methods (Access = protected)
@@ -45,6 +46,7 @@ classdef dataManager < matlab.mixin.CustomDisplay
 
    methods
 
+
       function [paths] = getPath(dm,hash)
          % returns the path corresponding to a hash
 
@@ -77,26 +79,31 @@ classdef dataManager < matlab.mixin.CustomDisplay
                error('Hash not found!')
             else
                paths{i} = all_paths{this_index};
-
-               % check that the hash is correct
-               try
-                  temp = md5(paths{i});
-               catch
-                  Opt.Input = 'file';
-                  temp = dataHash(paths{i},Opt);
+               if dm.verbosity
+                  disp([hash{i} '-> ' paths{i}])
                end
-               if ~strcmp(hash{i},temp)
-                  disp('File modified since last rehash. Your data has been modified, and the hashes do not match.')
-                  disp('File name:')
-                  disp(paths{i})
-                  disp(['Requested hash is ' hash{i}])
-                  disp(['Actual hash is ' temp])
 
-                  cprintf('text','\nrehash the problematic file: ')
-                  eval_string = ['rehash(dataManager,' char(39), paths{i} char(39) ')'];
-                  fprintf(['<a href="matlab:' eval_string '">rehash this file</a>']);
+               if ~isdir(paths{i})
+                  % check that the hash is correct
+                  try
+                     temp = md5(paths{i});
+                  catch
+                     Opt.Input = 'file';
+                     temp = dataHash(paths{i},Opt);
+                  end
+                  if ~strcmp(hash{i},temp)
+                     disp('File modified since last rehash. Your data has been modified, and the hashes do not match.')
+                     disp('File name:')
+                     disp(paths{i})
+                     disp(['Requested hash is ' hash{i}])
+                     disp(['Actual hash is ' temp])
 
-                  error('hash check failed')
+                     cprintf('text','\nrehash the problematic file: ')
+                     eval_string = ['rehash(dataManager,' char(39), paths{i} char(39) ')'];
+                     fprintf(['<a href="matlab:' eval_string '">rehash this file</a>']);
+
+                     error('hash check failed')
+                  end
                end
 
                last_retrieved{this_index} = datestr(now);
@@ -111,7 +118,7 @@ classdef dataManager < matlab.mixin.CustomDisplay
          save([fileparts(which(mfilename)) oss 'hash_table.mat'],'last_retrieved','-append')
       end
 
-      function rehash(~,path_name)
+      function rehash(dm,path_name)
 
          % load the hash table
          if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==2
@@ -126,6 +133,13 @@ classdef dataManager < matlab.mixin.CustomDisplay
             path_name = cd;
          end
 
+         % locate and read the dmignore file
+         if exist([fileparts(which(mfilename)) oss 'dmignore.m'],'file') == 2
+            lines = lineRead([fileparts(which(mfilename)) oss 'dmignore.m']);
+         else
+            error('No dmignore.m file found!')
+         end
+
          % get all folders in the path
          all_folders = getAllFolders(path_name);
 
@@ -138,6 +152,9 @@ classdef dataManager < matlab.mixin.CustomDisplay
 
          % for each folder...
          for i = 1:length(all_folders)
+            if dm.verbosity
+               disp(all_folders{i})
+            end
             % .... get all the files in this folder
             all_files = dir(all_folders{i});
             all_files = {all_files.name};
@@ -158,13 +175,6 @@ classdef dataManager < matlab.mixin.CustomDisplay
                end
             end
             all_files(rm_this) = []; clear rm_this
-
-            % locate and read the dmignore file
-            if exist([fileparts(which(mfilename)) oss 'dmignore.m'],'file') == 2
-               lines = lineRead([fileparts(which(mfilename)) oss 'dmignore.m']);
-            else
-               error('No dmignore.m file found!')
-            end
 
             % build a list of things to ignore from the dmignore file
             ignore_these = {};
@@ -192,6 +202,9 @@ classdef dataManager < matlab.mixin.CustomDisplay
             Opt.Input = 'file';
             for j = 1:length(all_files)
                disp(all_files{j})
+               if dm.verbosity
+                  disp(['Hashing:' all_files{i}])
+               end
                % attempt to use system md5 first,
                try
                   hashes{j} = md5(all_files{j});
@@ -204,11 +217,17 @@ classdef dataManager < matlab.mixin.CustomDisplay
             for j = 1:length(hashes)
                if isempty(find(strcmp(hashes{j},all_hashes),1,'first')) && isempty(find(strcmp(all_files{j},all_paths),1,'first'))
                   % completely new hash. simply add it. 
+                  if dm.verbosity
+                     disp(['New hash:' hashes{j}])
+                  end
                else
                   rm_this = [];
                   % remove the old hash corresponding to the current path
                   if ~isempty(find(strcmp(all_files{j},all_paths),1,'first'))
                      rm_this = find(strcmp(all_files{j},all_paths),1,'first');
+                  end
+                  if dm.verbosity
+                     disp(['hash exists already:' hashes{j}])
                   end
 
                   % and also remove the old path corresponding to the current hash
@@ -235,8 +254,16 @@ classdef dataManager < matlab.mixin.CustomDisplay
 
 
             if isempty(find(strcmp(folder_hash,all_hashes),1,'first')) && isempty(find(strcmp(all_folders{i},all_paths),1,'first'))
-               % this folder hash does not exist in the hash table
+               
+               if dm.verbosity
+                  disp('this folder hash does not exist in the hash table:')
+                  disp(folder_hash)
+               end
             else
+               if dm.verbosity
+                  disp('this folder hash is novel:')
+                  disp(folder_hash)
+               end
                rm_this = [];
                % remove the old hash corresponding to the current path
                if ~isempty(find(strcmp(all_folders{i},all_paths),1,'first'))
