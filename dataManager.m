@@ -10,7 +10,7 @@
 
 classdef dataManager < matlab.mixin.CustomDisplay
    properties
-      verbosity  = 10;
+      verbosity  = 0;
    end
    
     methods (Access = protected)
@@ -82,6 +82,9 @@ classdef dataManager < matlab.mixin.CustomDisplay
                if dm.verbosity
                   disp([hash{i} '-> ' paths{i}])
                end
+
+               % check if this path exists
+               assert(exist(paths{i},'file')>0,'File not found!')
 
                if ~isdir(paths{i})
                   % check that the hash is correct
