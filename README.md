@@ -2,7 +2,7 @@
 
 ## What this is
 
-hash-based data management system written in MATLAB. 
+hash-based data management system. `MATLAB` and `python` offerings available.
 
 ## The problem
 
@@ -16,7 +16,16 @@ hash-based data management system written in MATLAB.
 
 This is inspired by how [magnet links](https://en.wikipedia.org/wiki/Magnet_URI_scheme) work. 
 
-## Installation
+## Differences between MATLAB and python implementations
+
+|   |MATLAB        | Python |
+| -----  |-------       | ----------- |
+|  Status |feature-complete	    | WIP | 
+|  Location |hash table stored in `hash_table.mat` | hash table stored in `hash_table.pkl` |
+| Tech  |uses MATLAB arrays    | uses python dictionaries | 
+| Hashing  |uses system `md5` or `dataHash.m`| uses `hashlib` |
+
+## Installation (MATLAB)
 
 The recommended way to install this is to use my package manager:
 
@@ -35,7 +44,7 @@ git clone https://github.com/sg-s/srinivas.gs_mtools
 
 Don't forget to fix your MATLAB paths so that it points to the correct folders. 
 
-## Usage
+## Usage (MATLAB)
 
 First, generate a dataManager object:
 
@@ -88,7 +97,7 @@ dm.cleanup
 View all methods of `dataManager`:
 
 ```matlab
-mathods(dataManager)
+methods(dataManager)
 ```
 
 View interactive help:
@@ -97,6 +106,41 @@ dataManager
 ```
 
 dataManager also uses a file called `dmignore.m` which lists file name patterns that it should ignore. You can add to `dmignore.m` to suit your needs. 
+
+## Usage (python)
+
+First, import the module:
+
+```python
+from DataManager import DataManager 
+dm = DataManager()
+```
+
+Scan the current folder for all data files and determine their hashes:
+
+```python
+dm.rehash()
+```
+
+Scan a specific folder and add all the data there to the hash table:
+
+```python
+dm.rehash('/path/to/folder/with/data/')
+```
+
+Retrieve the path corresponding to a particular hash:
+
+```python
+path_name = dm[hash]
+```
+
+View all hashes and paths stored in the hash table, sorted by path name:
+
+```python
+dm.view()
+```
+
+
 
 # License 
 
