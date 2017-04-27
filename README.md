@@ -24,6 +24,7 @@ This is inspired by how [magnet links](https://en.wikipedia.org/wiki/Magnet_URI_
 |  Location |hash table stored in `hash_table.mat` | hash table stored in `hash_table.pkl` |
 | Tech  |uses MATLAB arrays    | uses python dictionaries | 
 | Hashing  |uses system `md5` or `dataHash.m`| uses `hashlib` |
+| Performance (182 MB file) | ~19 ms | ~0.37 ms |
 
 ## Installation (MATLAB)
 

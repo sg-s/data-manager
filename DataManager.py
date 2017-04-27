@@ -8,8 +8,11 @@ class DataManager(dict):
 	def __init__(self):
 		self.version_number = "0.0.22"
 		temp = self.loadDict()
-		for key in temp.keys():
-			self[key] = temp[key]
+		if temp == None:
+			pass
+		else:
+			for key in temp.keys():
+				self[key] = temp[key]
 
 	def view(self):
 		"""view hash table"""
@@ -59,7 +62,6 @@ class DataManager(dict):
 
 	def saveHashTable(self):
 		hash_table_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),'hash_table.pkl')
-		print(hash_table_path)
 		with open(hash_table_path, 'wb') as f:
 			pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
 

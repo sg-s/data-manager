@@ -204,7 +204,6 @@ classdef dataManager < matlab.mixin.CustomDisplay
             hashes = all_files;
             Opt.Input = 'file';
             for j = 1:length(all_files)
-               disp(all_files{j})
                if dm.verbosity
                   disp(['Hashing:' all_files{i}])
                end
@@ -292,7 +291,6 @@ classdef dataManager < matlab.mixin.CustomDisplay
 
          end % end loop over all_folders
          % save this...
-         disp('Saving...')
          if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==7
             save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','last_retrieved','-append')
          else
