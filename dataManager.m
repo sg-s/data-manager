@@ -10,7 +10,7 @@
 
 classdef dataManager < matlab.mixin.CustomDisplay
    properties
-      verbosity  = 0;
+      verbosity  = 1;
    end
    
     methods (Access = protected)
