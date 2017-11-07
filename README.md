@@ -1,5 +1,7 @@
 # dataManager
 
+[![GitHub last commit](https://img.shields.io/github/last-commit/sg-s/data-manager.svg)]()
+
 ## What this is
 
 hash-based data management system. `MATLAB` and `python` offerings available.

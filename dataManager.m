@@ -420,6 +420,7 @@ classdef dataManager < matlab.mixin.CustomDisplay
          all_hashes(delete_me) = [];
          last_retrieved(delete_me) = [];
 
+
          if any(delete_me)
             disp(['Deleted ' oval(sum(delete_me)) ' entries from the hash table because they matched patterns defined in dmignore.m'])
          end
