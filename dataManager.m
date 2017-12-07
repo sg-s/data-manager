@@ -205,7 +205,7 @@ classdef dataManager < matlab.mixin.CustomDisplay
             Opt.Input = 'file';
             for j = 1:length(all_files)
                if dm.verbosity
-                  disp(['Hashing:' all_files{i}])
+                  disp(['Hashing:' all_files{j}])
                end
                % attempt to use system md5 first,
                try
