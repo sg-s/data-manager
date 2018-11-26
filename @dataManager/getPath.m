@@ -40,12 +40,9 @@ function [paths] = getPath(dm,hash)
 
          if ~isdir(paths{i})
             % check that the hash is correct
-            try
-               temp = md5(paths{i});
-            catch
-               Opt.Input = 'file';
-               temp = dataHash(paths{i},Opt);
-            end
+
+            temp = GetMD5(paths{i},'File');
+
             if ~strcmp(hash{i},temp)
                disp('File modified since last rehash. Your data has been modified, and the hashes do not match.')
                disp('File name:')
@@ -70,5 +67,10 @@ function [paths] = getPath(dm,hash)
    end
 
    % save
-   save([fileparts(which(mfilename)) filesep 'hash_table.mat'],'last_retrieved','-append')
+   file_name = [fileparts(which('dataManager')) filesep 'hash_table.mat'];
+   if exist(file_name,'file') == 2
+      save([fileparts(which('dataManager')) filesep 'hash_table.mat'],'last_retrieved','-append')
+   else
+      save([fileparts(which('dataManager')) filesep 'hash_table.mat'],'last_retrieved','-v7.3','-nocompression')
+   end
 end

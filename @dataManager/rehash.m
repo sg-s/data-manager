@@ -14,8 +14,8 @@ function rehash(dm,path_name)
    end
 
    % locate and read the dmignore file
-   if exist([fileparts(fileparts(which(mfilename))) filesep 'dmignore.m'],'file') == 2
-      lines = lineRead([fileparts(fileparts(which(mfilename))) filesep 'dmignore.m']);
+   if exist([fileparts(fileparts(which('dataManager'))) filesep 'dmignore.m'],'file') == 2
+      lines = lineRead([fileparts(fileparts(which('dataManager'))) filesep 'dmignore.m']);
    else
       error('No dmignore.m file found!')
    end
@@ -84,12 +84,9 @@ function rehash(dm,path_name)
          if dm.verbosity
             disp(['Hashing:' all_files{j}])
          end
-         % attempt to use system md5 first,
-         try
-            hashes{j} = md5(all_files{j});
-         catch
-            hashes{j} = dataHash(all_files{j},Opt);
-         end
+
+         hashes{j} = GetMD5(all_files{j},'File');
+
       end
 
       % add all these hashes to the main hash table, and overwrite if need be
@@ -129,7 +126,7 @@ function rehash(dm,path_name)
       end
 
       % now we identify the folder we are in using a hash of all the hashes of the files in it
-      folder_hash = dataHash(hashes);
+      folder_hash = GetMD5([hashes{:}]);
 
 
       if isempty(find(strcmp(folder_hash,all_hashes),1,'first')) && isempty(find(strcmp(all_folders{i},all_paths),1,'first'))
