@@ -41,7 +41,7 @@ function [paths] = getPath(dm,hash)
          if ~isdir(paths{i})
             % check that the hash is correct
 
-            temp = GetMD5(paths{i},'File');
+            temp = hashlib.md5hash(paths{i},'File');
 
             if ~strcmp(hash{i},temp)
                disp('File modified since last rehash. Your data has been modified, and the hashes do not match.')
