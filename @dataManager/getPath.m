@@ -50,7 +50,7 @@ function [paths] = getPath(dm,hash)
                disp(['Requested hash is ' hash{i}])
                disp(['Actual hash is ' temp])
 
-               cprintf('text','\nrehash the problematic file: ')
+               corelib.cprintf('text','\nrehash the problematic file: ')
                eval_string = ['rehash(dataManager,' char(39), paths{i} char(39) ')'];
                fprintf(['<a href="matlab:' eval_string '">rehash this file</a>']);
 

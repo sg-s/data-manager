@@ -21,22 +21,22 @@ classdef dataManager < matlab.mixin.CustomDisplay
             fprintf([' (build ' strtrim(fileread([fileparts(fileparts(which(mfilename))) filesep 'build_number'])) ')\n'])
 
             fprintf('dataManager is a toolbox that lets you address data by what it is, rather than where it is\n\n')
-            cprintf('_text','Usage:')
+            corelib.cprintf('_text','Usage:')
             fprintf('\n\n')
 
-            cprintf('text','View hash table: ')
+            corelib.cprintf('text','View hash table: ')
             fprintf('<a href="matlab:view(dataManager)">view(dataManager)</a>');
 
-            cprintf('text','\nrehash current folder: ')
+            corelib.cprintf('text','\nrehash current folder: ')
             fprintf('<a href="matlab:rehash(dataManager)">rehash(dataManager)</a>');
 
-            cprintf('text','\nrehash specific folder: ')
+            corelib.cprintf('text','\nrehash specific folder: ')
             fprintf('rehash(dataManager,''path/to-folder/'')');
 
-            cprintf('text','\nget path to a particular data file: ')
+            corelib.cprintf('text','\nget path to a particular data file: ')
             fprintf('getPath(dataManager,''hash-of-data'')');
 
-            cprintf('text','\nclean up; prune dead links: ')
+            corelib.cprintf('text','\nclean up; prune dead links: ')
             fprintf('<a href="matlab:cleanup(dataManager)">cleanup(dataManager)</a>');
 
             fprintf('\n \ndata-manager is free software, released under the GPL.\n');
@@ -63,4 +63,7 @@ classdef dataManager < matlab.mixin.CustomDisplay
     end
 
    end % end methods
+
+
+
 end % end classdef

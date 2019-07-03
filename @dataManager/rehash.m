@@ -15,13 +15,13 @@ function rehash(dm,path_name)
 
    % locate and read the dmignore file
    if exist([fileparts(fileparts(which('dataManager'))) filesep 'dmignore.m'],'file') == 2
-      lines = lineRead([fileparts(fileparts(which('dataManager'))) filesep 'dmignore.m']);
+      lines = filelib.read([fileparts(fileparts(which('dataManager'))) filesep 'dmignore.m']);
    else
       error('No dmignore.m file found!')
    end
 
    % get all folders in the path
-   all_folders = getAllFolders(path_name);
+   all_folders = filelib.getAllFolders(path_name);
 
    % make sure there are no trailing slashes
    for i = 1:length(all_folders)
@@ -85,7 +85,7 @@ function rehash(dm,path_name)
             disp(['Hashing:' all_files{j}])
          end
 
-         hashes{j} = GetMD5(all_files{j},'File');
+         hashes{j} = hashlib.md5hash(all_files{j},'File');
 
       end
 
@@ -126,7 +126,7 @@ function rehash(dm,path_name)
       end
 
       % now we identify the folder we are in using a hash of all the hashes of the files in it
-      folder_hash = GetMD5([hashes{:}]);
+      folder_hash = hashlib.md5hash([hashes{:}]);
 
 
       if isempty(find(strcmp(folder_hash,all_hashes),1,'first')) && isempty(find(strcmp(all_folders{i},all_paths),1,'first'))

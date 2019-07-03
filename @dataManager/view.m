@@ -33,7 +33,7 @@ function [] = view(dm,path_spec,sort_order)
 
    % sort the paths
    if strcmp(sort_order,'la')
-      sorted_times = sortCell(lr_hash);
+      sorted_times = celllib.sort(lr_hash);
       for i = 1:length(all_hashes)
          % find this path in the original cell array
          this_loc = find(strcmp(sorted_times{i},lr_hash));
@@ -43,7 +43,7 @@ function [] = view(dm,path_spec,sort_order)
          end
       end
    else
-      sorted_paths = sortCell(all_paths);
+      sorted_paths = celllib.sort(all_paths);
       for i = 1:length(all_hashes)
          % find this path in the original cell array
          if any(strfind(sorted_paths{i},path_spec)) ||  isempty(path_spec)
