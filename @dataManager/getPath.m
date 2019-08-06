@@ -36,7 +36,7 @@ function [paths] = getPath(dm,hash)
          end
 
          % check if this path exists
-         assert(exist(paths{i},'file')>0,'File not found!')
+         assert(exist(paths{i},'file')>0,['[FATAL] Hash resolved to : ' paths{i} ' , but this file does not exist.'])
 
          if ~isdir(paths{i})
             % check that the hash is correct
