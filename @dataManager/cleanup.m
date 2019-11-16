@@ -1,8 +1,8 @@
 function [] = cleanup(dm)
    % 1. remove paths in the hash table that point to files that no longer exist
     % load the hash table
-   if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==2
-      load([fileparts(which(mfilename)) oss 'hash_table.mat'])
+   if exist([fileparts(which(mfilename)) filesep 'hash_table.mat'],'file')==2
+      load([fileparts(which(mfilename)) filesep 'hash_table.mat'])
    else
       disp('Hash table empty.')
       return
@@ -25,8 +25,8 @@ function [] = cleanup(dm)
 
    % 2. remove entries in the hash table that match a pattern in the dmignore file
    % locate and read the dmignore file
-   if exist([fileparts(which(mfilename)) oss 'dmignore.m'],'file') == 2
-      lines = lineRead([fileparts(which(mfilename)) oss 'dmignore.m']);
+   if exist([fileparts(which(mfilename)) filesep 'dmignore.m'],'file') == 2
+      lines = lineRead([fileparts(which(mfilename)) filesep 'dmignore.m']);
    else
       error('No dmignore.m file found!')
    end
@@ -62,10 +62,10 @@ function [] = cleanup(dm)
 
    % save this...
    disp('Saving...')
-   if exist([fileparts(which(mfilename)) oss 'hash_table.mat'],'file')==7
-      save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','all_hashes','last_retrieved','-append')
+   if exist([fileparts(which(mfilename)) filesep 'hash_table.mat'],'file')==7
+      save([fileparts(which(mfilename)) filesep 'hash_table.mat'],'all_paths','all_hashes','last_retrieved','-append')
    else
-      save([fileparts(which(mfilename)) oss 'hash_table.mat'],'all_paths','last_retrieved','all_hashes','-v7.3')
+      save([fileparts(which(mfilename)) filesep 'hash_table.mat'],'all_paths','last_retrieved','all_hashes','-v7.3')
    end
 
 end % end cleanup function
